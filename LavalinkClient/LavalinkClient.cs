@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,8 +26,17 @@ namespace LavalinkClient
             this.token = token;
             token.Register(Kill);
             var jarLocation = AppDomain.CurrentDomain.BaseDirectory + "lavalink\\";
-            
-            process.StartInfo.FileName = GetJavaInstallationPath() + "\\bin\\java.exe";
+            Console.WriteLine(jarLocation);
+            var javaloc = Environment.GetEnvironmentVariable("JAVA_HOME") + "\\java";
+            Console.WriteLine(javaloc);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                jarLocation = jarLocation.Replace('\\', '/');
+                javaloc = javaloc.Replace('\\', '/');
+            }
+            Console.WriteLine(javaloc);
+            Console.WriteLine(jarLocation);
+            process.StartInfo.FileName = javaloc;
             process.StartInfo.Arguments = $"-jar {jarLocation}Lavalink.jar";
             process.StartInfo.WorkingDirectory = jarLocation;
             process.StartInfo.CreateNoWindow = true;
